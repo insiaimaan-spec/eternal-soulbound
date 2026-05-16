@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eternal Soulbound NFT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- NO external JS scripts — eliminates the "Cannot read Connection" error on Samsung/mobile browsers -->
+<style>
+:root{
+  --gold:#d4a84b;--gold2:#f0cc70;--gold-dim:rgba(212,168,75,.07);
+  --gold-glow:rgba(212,168,75,.38);--purple:#8b5cf6;--teal:#2dd4bf;
+  --text:#f5f0e8;--text2:#9a8070;--text3:#4a3f30;
+  --border:rgba(212,168,75,.14);--border2:rgba(212,168,75,.38);
+  --danger:#ff4f70;--card:rgba(7,5,16,.91);--r:7px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100vh;font-family:'DM Sans',system-ui,sans-serif;color:var(--text);background:#010108;overflow-x:hidden}
+body{display:flex;align-items:center;justify-content:center;padding:2rem 1rem;position:relative}
+
+/* AURORA */
+.aurora{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);mix-blend-mode:screen}
+.o1{width:800px;height:800px;background:radial-gradient(circle,rgba(139,92,246,.42)0%,transparent 65%);top:-260px;left:-260px;animation:o1 32s ease-in-out infinite}
+.o2{width:700px;height:700px;background:radial-gradient(circle,rgba(212,168,75,.30)0%,transparent 65%);bottom:-210px;right:-210px;animation:o2 26s ease-in-out infinite}
+.o3{width:560px;height:560px;background:radial-gradient(circle,rgba(45,212,191,.22)0%,transparent 65%);top:40%;left:42%;transform:translate(-50%,-50%);animation:o3 40s ease-in-out infinite}
+.o4{width:480px;height:480px;background:radial-gradient(circle,rgba(244,114,182,.18)0%,transparent 65%);top:8%;right:-130px;animation:o4 22s ease-in-out infinite}
+.o5{width:360px;height:360px;background:radial-gradient(circle,rgba(96,165,250,.16)0%,transparent 65%);bottom:4%;left:4%;animation:o5 29s ease-in-out infinite}
+@keyframes o1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,-60px) scale(1.1)}66%{transform:translate(-50px,70px) scale(.92)}}
+@keyframes o2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-70px,50px) scale(1.08)}66%{transform:translate(60px,-80px) scale(.94)}}
+@keyframes o3{0%,100%{transform:translate(-50%,-50%) scale(1)}25%{transform:translate(-50%,-50%) translate(100px,60px) scale(1.15)}50%{transform:translate(-50%,-50%) translate(-60px,100px) scale(.87)}75%{transform:translate(-50%,-50%) translate(-100px,-50px) scale(1.07)}}
+@keyframes o4{0%,100%{transform:translate(0,0)}50%{transform:translate(-80px,100px) scale(.86)}}
+@keyframes o5{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-70px) scale(1.12)}}
+
+/* GRAIN */
+.grain{position:fixed;inset:-50%;width:200%;height:200%;opacity:.027;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation:grain 2.2s steps(3) infinite}
+@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-3%,-2%)}66%{transform:translate(2%,3%)}100%{transform:translate(-1%,-3%)}}
+
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* CARD */
+.card{position:relative;z-index:2;max-width:568px;width:100%;
+  background:var(--card);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(212,168,75,.05),0 50px 120px rgba(0,0,0,.88),inset 0 1px 0 rgba(255,255,255,.03);
+  animation:card-in .9s cubic-bezier(.16,1,.3,1) both}
+@keyframes card-in{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold2) 50%,var(--gold) 80%,transparent);opacity:.8}
+
+/* HERO */
+.hero{padding:3rem 2.5rem 2.2rem;text-align:center;
+  background:linear-gradient(180deg,rgba(139,92,246,.10)0%,transparent 100%);
+  border-bottom:1px solid var(--border)}
+.gem{font-size:2.6rem;display:block;margin-bottom:1rem;
+  filter:drop-shadow(0 0 20px rgba(212,168,75,.8));animation:gem 4s ease-in-out infinite}
+@keyframes gem{0%,100%{filter:drop-shadow(0 0 18px rgba(212,168,75,.65));transform:scale(1) rotate(-2deg)}50%{filter:drop-shadow(0 0 36px rgba(212,168,75,1));transform:scale(1.06) rotate(2deg)}}
+h1{font-family:'Cinzel',serif;font-weight:900;font-size:1.9rem;letter-spacing:.06em;
+  text-transform:uppercase;line-height:1.15;margin-bottom:.7rem;
+  background:linear-gradient(135deg,#f0d070 0%,#d4a84b 40%,#c8906a 75%,#d4a84b 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tagline{color:var(--text2);font-size:.92rem;letter-spacing:.03em;line-height:1.7}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.stat{padding:1.1rem 1.4rem;text-align:center}
+.stat:first-child{border-right:1px solid var(--border)}
+.stat-lbl{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:.3rem}
+.stat-val{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--gold)}
+.badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.6rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--purple);border:1px solid rgba(139,92,246,.35);
+  padding:.2rem .6rem;border-radius:3px;margin-top:.25rem}
+
+/* BODY */
+.body{padding:2rem 2.5rem}
+.sh{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.8rem}
+.sh::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* BENEFITS */
+.benefits{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:2rem}
+.bc{background:var(--gold-dim);border:1px solid var(--border);border-radius:6px;padding:1rem;
+  position:relative;overflow:hidden;transition:border-color .3s,background .3s,transform .3s}
+.bc::before{content:'';position:absolute;top:0;left:0;width:2px;height:0;
+  background:linear-gradient(180deg,var(--gold),rgba(212,168,75,0));transition:height .4s ease}
+.bc:hover{border-color:var(--border2);background:rgba(212,168,75,.09);transform:translateY(-2px)}
+.bc:hover::before{height:100%}
+.bi{font-size:1.3rem;margin-bottom:.35rem;display:block}
+.bn{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem}
+.bd{font-size:.78rem;color:var(--text2);line-height:1.55}
+
+.divl{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+
+/* ELIG */
+.elig-list{display:flex;flex-direction:column;gap:0;margin-bottom:1.6rem}
+.elig-card{background:var(--gold-dim);border:1px solid var(--border);border-radius:6px;padding:.9rem 1rem;
+  display:flex;align-items:center;gap:.85rem;transition:border-color .3s,background .3s}
+.elig-card:hover{border-color:var(--border2);background:rgba(212,168,75,.09)}
+.elig-icon{font-size:1.25rem;flex-shrink:0}
+.elig-text{font-size:.86rem;color:var(--text2);font-weight:500;line-height:1.4}
+.elig-text strong{color:var(--text);font-weight:600}
+.or-divider{display:flex;align-items:center;gap:.8rem;padding:.5rem 0}
+.or-line{flex:1;height:1px;background:var(--border)}
+.or-badge{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--border2);padding:.2rem .7rem;border-radius:20px;
+  background:rgba(212,168,75,.08);white-space:nowrap}
+
+/* WALLET ADDR */
+.w-addr{display:block;text-align:center;font-family:'Courier New',monospace;font-size:.76rem;
+  background:var(--gold-dim);border:1px solid var(--border);padding:.5rem 1rem;border-radius:4px;
+  color:var(--text2);margin-bottom:1rem;word-break:break-all}
+.elig-msg{text-align:center;font-size:.86rem;font-weight:600;letter-spacing:.02em;
+  min-height:1.4rem;margin-bottom:1rem;transition:all .4s ease}
+
+/* MINT STEPS */
+#mint-progress{display:none;margin:1.2rem 0;animation:fade-up .5s ease both}
+@keyframes fade-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.steps-row{display:flex;align-items:center;justify-content:center;margin-bottom:.75rem}
+.si{display:flex;flex-direction:column;align-items:center;gap:.45rem}
+.si-c{width:30px;height:30px;border-radius:50%;border:2px solid rgba(212,168,75,.12);display:flex;
+  align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.7rem;
+  color:rgba(212,168,75,.18);transition:all .55s cubic-bezier(.34,1.56,.64,1)}
+.si-ck{display:none}.si-n{display:block}
+.si-l{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(212,168,75,.18);transition:color .5s ease;white-space:nowrap}
+.sl{width:44px;height:2px;background:rgba(212,168,75,.08);position:relative;overflow:hidden}
+.sl::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:var(--teal);transition:left .7s cubic-bezier(.4,0,.2,1)}
+.si.act .si-c{border-color:var(--gold);color:var(--gold);
+  box-shadow:0 0 14px var(--gold-glow),0 0 28px rgba(212,168,75,.14);animation:sbeat 2s ease-in-out infinite}
+.si.act .si-l{color:var(--gold)}
+@keyframes sbeat{0%,100%{box-shadow:0 0 14px var(--gold-glow)}50%{box-shadow:0 0 26px rgba(212,168,75,.75),0 0 44px rgba(212,168,75,.26)}}
+.si.dn .si-c{border-color:var(--teal);background:rgba(45,212,191,.12);color:var(--teal);box-shadow:0 0 10px rgba(45,212,191,.3)}
+.si.dn .si-n{display:none}.si.dn .si-ck{display:block;color:var(--teal);font-size:.85rem}
+.si.dn .si-l{color:var(--teal)}
+.sl.dn::after{left:0}
+.step-msg{text-align:center;font-size:.82rem;color:var(--text2);min-height:1.2rem;transition:all .3s ease}
+
+/* BUTTONS */
+.btn{font-family:'Cinzel',serif;font-size:.79rem;letter-spacing:.14em;text-transform:uppercase;
+  border:none;border-radius:var(--r);padding:1rem 1.8rem;width:100%;cursor:pointer;
+  transition:all .3s cubic-bezier(.34,1.2,.64,1);margin:.35rem 0;position:relative;overflow:hidden}
+.btn-gold{background:linear-gradient(135deg,#a07828 0%,#d4a84b 35%,#e8c870 65%,#b88030 100%);
+  color:#0a0600;font-weight:700;box-shadow:0 4px 20px rgba(212,168,75,.22)}
+.btn-gold::after{content:'';position:absolute;top:-50%;left:-70%;width:40%;height:200%;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.28),transparent);
+  transform:skewX(-20deg);transition:left .55s ease}
+.btn-gold:hover:not(:disabled)::after{left:120%}
+.btn-gold:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 32px rgba(212,168,75,.45)}
+.btn-gold:active:not(:disabled){transform:translateY(0) scale(.99)}
+.btn-gold:disabled{background:rgba(70,50,15,.45);color:rgba(212,168,75,.22);box-shadow:none;cursor:not-allowed}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);
+  font-size:.7rem;padding:.7rem;box-shadow:none}
+.btn-ghost:hover:not(:disabled){border-color:var(--border2);color:var(--gold);background:var(--gold-dim)}
+.btn-minting{background:linear-gradient(90deg,#a07828 0%,#e8c870 28%,#d4a84b 56%,#a07828 84%) !important;
+  background-size:250% 100% !important;color:#0a0600 !important;
+  animation:bshim 1.8s linear infinite !important}
+@keyframes bshim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* STATUS */
+#status{margin-top:.8rem;font-size:.85rem;line-height:1.5;word-break:break-all;text-align:center;min-height:1rem}
+#status a{color:var(--gold);text-decoration:underline}
+.s-err{color:var(--danger)}.s-ok{color:var(--teal)}.s-info{color:var(--text2)}
+
+/* WALLET MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);z-index:200;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s ease}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:linear-gradient(160deg,#0e0b22,#07050f);
+  border:1px solid var(--border2);border-radius:14px;padding:2rem 1.8rem;
+  max-width:340px;width:90%;box-shadow:0 0 0 1px rgba(212,168,75,.06),0 30px 80px rgba(0,0,0,.85);
+  position:relative;transform:translateY(16px) scale(.97);transition:transform .3s cubic-bezier(.34,1.2,.64,1)}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.modal-title{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:1.5rem}
+.modal-close{position:absolute;top:.9rem;right:1rem;background:none;border:none;
+  color:var(--text2);font-size:1.2rem;cursor:pointer;transition:color .2s;padding:.2rem}
+.modal-close:hover{color:var(--gold)}
+.w-opt{display:flex;align-items:center;gap:1rem;width:100%;padding:.9rem 1.1rem;
+  border:1px solid var(--border);border-radius:8px;background:var(--gold-dim);
+  cursor:pointer;transition:all .25s;margin:.45rem 0;color:var(--text);
+  font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.w-opt:hover{border-color:var(--border2);transform:translateY(-1px)}
+.w-phantom:hover{border-color:rgba(83,75,177,.6);box-shadow:0 6px 24px rgba(83,75,177,.25)}
+.w-solflare:hover{border-color:rgba(252,92,62,.5);box-shadow:0 6px 24px rgba(252,92,62,.2)}
+.w-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem}
+.w-phantom .w-icon{background:linear-gradient(135deg,#534bb1,#551bf9)}
+.w-solflare .w-icon{background:linear-gradient(135deg,#fc5c3e,#ff8c00)}
+.w-hint{font-size:.72rem;color:var(--text2);text-align:center;margin-top:.9rem;line-height:1.7}
+.w-hint a{color:var(--gold);text-decoration:none}.w-hint a:hover{text-decoration:underline}
+
+/* FOOTER */
+.foot{border-top:1px solid var(--border);padding:1rem 2.5rem;display:flex;align-items:center;
+  justify-content:space-between;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--text3)}
+.foot-lock{color:var(--gold);font-weight:600}
+
+/* CONFETTI */
+.conf{position:fixed;pointer-events:none;z-index:9999;border-radius:2px;animation:cfall linear forwards}
+@keyframes cfall{
+  0%{transform:translate(var(--x),var(--y)) rotate(0deg) scale(1);opacity:1}
+  100%{transform:translate(calc(var(--x) + var(--dx)),calc(var(--y) + var(--dy))) rotate(660deg) scale(.1);opacity:0}}
+
+@media(max-width:500px){
+  .benefits{grid-template-columns:1fr}h1{font-size:1.5rem}
+  .hero{padding:2.2rem 1.4rem 1.8rem}.body{padding:1.5rem}
+  .foot{flex-direction:column;gap:.3rem;padding:.9rem 1.4rem}.sl{width:28px}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="orb o4"></div><div class="orb o5"></div>
+</div>
+<canvas id="stars"></canvas>
+<div class="grain"></div>
+
+<!-- WALLET MODAL -->
+<div class="modal-overlay" id="wallet-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-title">✦ Select Your Wallet</div>
+    <button class="w-opt w-phantom" id="choose-phantom">
+      <div class="w-icon">👻</div>Phantom
+    </button>
+    <button class="w-opt w-solflare" id="choose-solflare">
+      <div class="w-icon">🌟</div>Solflare
+    </button>
+    <div class="w-hint" id="w-hint"></div>
+  </div>
+</div>
+
+<!-- MAIN CARD -->
+<div class="card">
+  <div class="hero">
+    <span class="gem">♦</span>
+    <h1>Eternal Soulbound<br>NFT</h1>
+    <p class="tagline">A permanently frozen on-chain identity.<br>Bound to your soul forever on Solana.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-lbl">Total Supply</div>
+      <div class="stat-val">4,331</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Token Type</div>
+      <div><span class="badge">🔒 Non-Transferable</span></div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="sh">✦ Holder Benefits</div>
+    <div class="benefits">
+      <div class="bc"><span class="bi">🪂</span><div class="bn">Token Airdrop</div><div class="bd">6% of total token supply airdropped exclusively to verified NFT holders.</div></div>
+      <div class="bc"><span class="bi">🗳️</span><div class="bn">Governance</div><div class="bd">Vote on protocol decisions and shape the project's future direction.</div></div>
+      <div class="bc"><span class="bi">⚡</span><div class="bn">Early Access</div><div class="bd">Priority access to future drops, features and ecosystem partnerships.</div></div>
+      <div class="bc"><span class="bi">💎</span><div class="bn">Revenue Share</div><div class="bd">Proportional share of protocol fees distributed directly to holders.</div></div>
+      <div class="bc"><span class="bi">🛡️</span><div class="bn">On-Chain Identity</div><div class="bd">Permanent soulbound proof of verified membership on Solana mainnet.</div></div>
+      <div class="bc"><span class="bi">🌐</span><div class="bn">VIP Community</div><div class="bd">Exclusive holder channels, alpha signals and private strategy calls.</div></div>
+    </div>
+
+    <div class="divl"></div>
+
+    <div class="sh">✦ Who Can Mint</div>
+    <div class="elig-list">
+      <div class="elig-card">
+        <span class="elig-icon">🪙</span>
+        <div class="elig-text"><strong>Hold JUP Tokens</strong><br>Any amount of JUP in your wallet qualifies you instantly.</div>
+      </div>
+      <div class="or-divider">
+        <div class="or-line"></div>
+        <span class="or-badge">✦ &nbsp; OR &nbsp; ✦</span>
+        <div class="or-line"></div>
+      </div>
+      <div class="elig-card">
+        <span class="elig-icon">⚡</span>
+        <div class="elig-text"><strong>Used Jupiter DEX</strong><br>Any swap on Jupiter within the last 60 days qualifies you.</div>
+      </div>
+    </div>
+
+    <div id="wallet-sec">
+      <button id="connect-btn" class="btn btn-gold">Connect Wallet</button>
+    </div>
+
+    <div id="mint-sec" style="display:none">
+      <span class="w-addr" id="w-addr"></span>
+      <div class="elig-msg" id="elig-msg"></div>
+      <div id="mint-progress">
+        <div class="steps-row">
+          <div class="si" id="si-0"><div class="si-c"><span class="si-n">1</span><span class="si-ck">✓</span></div><div class="si-l">Prepare</div></div>
+          <div class="sl" id="sl-01"></div>
+          <div class="si" id="si-1"><div class="si-c"><span class="si-n">2</span><span class="si-ck">✓</span></div><div class="si-l">Sign</div></div>
+          <div class="sl" id="sl-12"></div>
+          <div class="si" id="si-2"><div class="si-c"><span class="si-n">3</span><span class="si-ck">✓</span></div><div class="si-l">Confirm</div></div>
+          <div class="sl" id="sl-23"></div>
+          <div class="si" id="si-3"><div class="si-c"><span class="si-n">4</span><span class="si-ck">✓</span></div><div class="si-l">Done</div></div>
+        </div>
+        <div class="step-msg" id="step-msg"></div>
+      </div>
+      <button id="mint-btn"       class="btn btn-gold" disabled>Checking eligibility…</button>
+      <button id="disconnect-btn" class="btn btn-ghost">Disconnect Wallet</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <div class="foot">
+    <span class="foot-lock">🔒 Metaplex Core · PermanentFreezeDelegate</span>
+    <span>Solana Mainnet</span>
+  </div>
+</div>
+
+<!-- STARFIELD — pure canvas, zero dependencies -->
+<script>
+(function(){
+  var c=document.getElementById('stars'),ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  var S=[];for(var i=0;i<220;i++)S.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.3+.15,ph:Math.random()*Math.PI*2,sp:Math.random()*.007+.002});
+  var shots=[];
+  function addShot(){shots.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight*.5,len:Math.random()*140+60,spd:Math.random()*7+4,ang:Math.PI/4+(Math.random()-.5)*.4,life:1,dec:Math.random()*.018+.012});}
+  setInterval(addShot,3800);setTimeout(addShot,900);
+  var t=0;
+  (function draw(){
+    ctx.clearRect(0,0,c.width,c.height);t+=.012;
+    for(var i=0;i<S.length;i++){var s=S[i];var a=.05+.65*Math.abs(Math.sin(t*s.sp*8+s.ph));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='rgba(245,240,232,'+a+')';ctx.fill();}
+    for(var i=shots.length-1;i>=0;i--){
+      var s=shots[i],dx=Math.cos(s.ang)*s.len,dy=Math.sin(s.ang)*s.len;
+      var g=ctx.createLinearGradient(s.x,s.y,s.x-dx,s.y-dy);
+      g.addColorStop(0,'rgba(212,168,75,'+(s.life*.88)+')');g.addColorStop(.5,'rgba(240,200,110,'+(s.life*.35)+')');g.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-dx,s.y-dy);ctx.strokeStyle=g;ctx.lineWidth=1.6;ctx.stroke();
+      s.x+=Math.cos(s.ang)*s.spd;s.y+=Math.sin(s.ang)*s.spd;s.life-=s.dec;if(s.life<=0)shots.splice(i,1);
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
+</script>
+
+<!--
+  ROOT FIX: Zero external JS dependencies for UI.
+  - No @solana/web3.js script tag — was causing "Cannot read Connection" on Samsung Browser
+  - All Solana RPC calls use plain fetch() with JSON-RPC protocol
+  - Metaplex lazy-loaded only when user clicks Mint
+-->
+<script>
+(function(){
+
+/* ── CONFIG ── */
+var RPC          = 'https://api.mainnet-beta.solana.com';
+var FEE_OWNER    = 'B1q1EjFChxD7dZpVe22hBxrhs1e5gQ4iWymx2cgBYGeh';
+var MINT_FEE_SOL = 0.005;
+var NFT_NAME     = 'Eternal Soulbound NFT';
+var JUP_MINT     = 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN';
+var JUP_PROG     = 'JUP6LkbZbjS1jKKwapdHNy7zc6VkUhmH5EbW7e7ePu';
+var META_URI     = 'data:application/json;base64,' + btoa(JSON.stringify({
+  name: NFT_NAME,
+  description: '6% of total token supply airdropped to holders. Frozen via Metaplex Core.',
+  attributes:[{trait_type:'Soulbound',value:'True'}]
+}));
+
+/* ── DOM ── */
+function $(id){return document.getElementById(id);}
+var connectBtn    = $('connect-btn');
+var disconnectBtn = $('disconnect-btn');
+var mintBtn       = $('mint-btn');
+var walletSec     = $('wallet-sec');
+var mintSec       = $('mint-sec');
+var wAddrEl       = $('w-addr');
+var eligMsgEl     = $('elig-msg');
+var statusEl      = $('status');
+var mintProgress  = $('mint-progress');
+var stepMsgEl     = $('step-msg');
+var walletModal   = $('wallet-modal');
+
+/* ── STATE ── */
+var provider   = null;
+var isEligible = false;
+var isMinting  = false;
+
+/* ── UTILS ── */
+function setStatus(html, cls){ statusEl.innerHTML = html; statusEl.className = cls||''; }
+function clrStatus(){ statusEl.innerHTML=''; statusEl.className=''; }
+function parseErr(e){
+  var m = (e&&e.message)||String(e||'');
+  if(/reject|cancel|declin|dismiss/i.test(m)) return '❌ Transaction cancelled by user.';
+  if(/insufficient|balance/i.test(m))          return '❌ Insufficient SOL — need at least 0.005 SOL + gas.';
+  if(/timeout/i.test(m))                        return '❌ Network timeout — please try again.';
+  return '❌ '+(m.slice(0,160)||'Unknown error');
+}
+
+/* ──────────────────────────────────────────────
+   SOLANA RPC via plain fetch — NO web3.js needed
+   ────────────────────────────────────────────── */
+var _rpcId = 0;
+function solRpc(method, params){
+  return fetch(RPC, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0', id:++_rpcId, method:method, params:params})
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  })
+  .then(function(d){
+    if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
+    return d.result;
+  });
+}
+
+/* ── ELIGIBILITY via raw RPC ── */
+function checkEligibility(address){
+  return new Promise(function(resolve){
+
+    /* 1 — JUP token balance */
+    solRpc('getTokenAccountsByOwner', [
+      address,
+      {mint: JUP_MINT},
+      {encoding: 'jsonParsed'}
+    ])
+    .then(function(res){
+      var bal = 0;
+      var accs = (res&&res.value)||[];
+      for(var i=0;i<accs.length;i++){
+        try{ bal += accs[i].account.data.parsed.info.tokenAmount.uiAmount||0; }catch(e){}
+      }
+      if(bal > 0){ resolve({ok:true, reason:'Holding '+bal.toFixed(2)+' JUP ✓'}); return; }
+      checkDex(address, resolve);
+    })
+    .catch(function(e){
+      console.warn('JUP check failed:', e.message);
+      checkDex(address, resolve);
+    });
+  });
+}
+
+function checkDex(address, resolve){
+  eligMsgEl.textContent = '🔍 Scanning Jupiter DEX history…';
+
+  /* 2 — Fetch recent signatures */
+  solRpc('getSignaturesForAddress', [address, {limit:1000}])
+  .then(function(sigs){
+    var cutoff = Math.floor(Date.now()/1000) - 60*86400;
+    var recent = (sigs||[]).filter(function(s){ return s.blockTime && s.blockTime >= cutoff; });
+    if(!recent.length){
+      resolve({ok:false, reason:'No recent Jupiter activity found.'}); return;
+    }
+    scanBatch(recent, 0, resolve);
+  })
+  .catch(function(){
+    resolve({ok:false, reason:'Could not verify DEX activity — try again.'});
+  });
+}
+
+function scanBatch(sigs, idx, resolve){
+  if(idx >= sigs.length){
+    resolve({ok:false, reason:'No Jupiter DEX interaction in last 60 days.'}); return;
+  }
+
+  var batch = sigs.slice(idx, idx+5);
+  var promises = batch.map(function(s){
+    return solRpc('getTransaction',[s.signature,{maxSupportedTransactionVersion:0,encoding:'jsonParsed'}]);
+  });
+
+  Promise.allSettled(promises).then(function(results){
+    for(var j=0;j<results.length;j++){
+      if(results[j].status!=='fulfilled' || !results[j].value) continue;
+      var tx = results[j].value;
+
+      /* Collect all account keys — handles legacy + versioned formats */
+      var keys = [];
+      try{
+        var msg = tx.transaction.message;
+        /* Legacy: accountKeys is array of {pubkey,signer,writable} or strings */
+        var ak = msg.accountKeys || [];
+        for(var k=0;k<ak.length;k++){
+          keys.push(typeof ak[k]==='string' ? ak[k] : (ak[k].pubkey||''));
+        }
+        /* Versioned: staticAccountKeys is array of strings */
+        var sk = msg.staticAccountKeys || [];
+        for(var k=0;k<sk.length;k++){
+          keys.push(typeof sk[k]==='string' ? sk[k] : (sk[k].pubkey||''));
+        }
+      }catch(e){}
+
+      if(keys.indexOf(JUP_PROG) !== -1){
+        resolve({ok:true, reason:'Jupiter DEX used in last 60 days ✓'}); return;
+      }
+    }
+    /* Rate-limit friendly pause between batches */
+    setTimeout(function(){ scanBatch(sigs, idx+5, resolve); }, 200);
+  });
+}
+
+/* ── MINT STEP UI ── */
+function setStep(n, msg){
+  mintProgress.style.display = 'block';
+  for(var i=0;i<4;i++){
+    $(('si-'+i)).className = 'si'+(i<n?' dn':i===n?' act':'');
+  }
+  var lines=[['01',0],['12',1],['23',2]];
+  for(var i=0;i<lines.length;i++){
+    $(('sl-'+lines[i][0])).className = 'sl'+(lines[i][1]<n?' dn':'');
+  }
+  if(msg) stepMsgEl.textContent = msg;
+}
+
+/* ── CONFETTI ── */
+function confetti(){
+  var cols=['#d4a84b','#f0cc70','#8b5cf6','#2dd4bf','#ffffff','#f472b6'];
+  var cx=innerWidth/2, cy=innerHeight/2;
+  for(var i=0;i<100;i++){
+    (function(){
+      var el=document.createElement('div');
+      el.className='conf';
+      var ang=Math.random()*Math.PI*2, dist=Math.random()*340+100;
+      el.style.cssText='left:0;top:0;--x:'+cx+'px;--y:'+cy+'px;--dx:'+Math.cos(ang)*dist+'px;--dy:'+Math.sin(ang)*dist+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';width:'+(Math.random()*10+4)+'px;height:'+(Math.random()*10+4)+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+';animation-duration:'+(Math.random()*.9+.75)+'s;animation-delay:'+(Math.random()*.4)+'s';
+      document.body.appendChild(el);
+      setTimeout(function(){try{el.parentNode&&el.parentNode.removeChild(el);}catch(e){}},2200);
+    })();
+  }
+}
+
+/* ── MODAL ── */
+function openModal(){
+  var hasP  = !!(window.phantom&&window.phantom.solana)||(window.solana&&window.solana.isPhantom);
+  var hasSF = !!(window.solflare);
+  var hints=[];
+  if(!hasP)  hints.push('<a href="https://phantom.app" target="_blank">Install Phantom ↗</a>');
+  if(!hasSF) hints.push('<a href="https://solflare.com" target="_blank">Install Solflare ↗</a>');
+  $('w-hint').innerHTML = hints.join(' &nbsp;·&nbsp; ');
+  walletModal.classList.add('open');
+}
+function closeModal(){ walletModal.classList.remove('open'); }
+$('modal-close').onclick = closeModal;
+walletModal.onclick = function(e){ if(e.target===walletModal) closeModal(); };
+connectBtn.onclick = openModal;
+
+/* ── WALLET DETECTION ── */
+function getPhantom(){
+  if(window.phantom&&window.phantom.solana) return window.phantom.solana;
+  if(window.solana&&window.solana.isPhantom) return window.solana;
+  return null;
+}
+function getSolflare(){ return window.solflare||null; }
+
+/* ── CONNECT ── */
+function connectWith(wallet, name){
+  closeModal();
+  if(!wallet){
+    setStatus('❌ '+name+' not detected. Please install it and refresh.','s-err'); return;
+  }
+  connectBtn.disabled=true;
+  connectBtn.textContent='Connecting '+name+'…';
+
+  Promise.resolve(wallet.connect()).then(function(){
+    provider = wallet;
+    var addr = provider.publicKey.toString();
+    wAddrEl.textContent  = addr;
+    walletSec.style.display = 'none';
+    mintSec.style.display   = 'block';
+    clrStatus();
+
+    eligMsgEl.textContent = '🔍 Checking eligibility…';
+    eligMsgEl.style.color = 'var(--text2)';
+    mintBtn.disabled    = true;
+    mintBtn.textContent = 'Checking…';
+
+    checkEligibility(addr).then(function(res){
+      isEligible = res.ok;
+      if(res.ok){
+        eligMsgEl.innerHTML='<span style="color:var(--teal)">✅ Eligible — '+res.reason+'</span>';
+        mintBtn.disabled    = false;
+        mintBtn.textContent = 'Mint Your Soulbound NFT';
+      } else {
+        eligMsgEl.innerHTML='<span style="color:var(--danger)">❌ Not eligible — '+res.reason+'</span>';
+        mintBtn.disabled    = true;
+        mintBtn.textContent = 'Not Eligible';
+      }
+    });
+  })
+  .catch(function(e){
+    connectBtn.disabled    = false;
+    connectBtn.textContent = 'Connect Wallet';
+    setStatus(parseErr(e),'s-err');
+  });
+}
+
+$('choose-phantom').onclick  = function(){ connectWith(getPhantom(),  'Phantom');  };
+$('choose-solflare').onclick = function(){ connectWith(getSolflare(), 'Solflare'); };
+
+/* ── DISCONNECT ── */
+disconnectBtn.onclick = function(){
+  try{ if(provider&&provider.disconnect) provider.disconnect(); }catch(e){}
+  provider=null; isEligible=false;
+  walletSec.style.display    = 'block';
+  mintSec.style.display      = 'none';
+  mintProgress.style.display = 'none';
+  eligMsgEl.textContent      = '';
+  connectBtn.disabled        = false;
+  connectBtn.textContent     = 'Connect Wallet';
+  mintBtn.disabled           = true;
+  mintBtn.textContent        = 'Checking eligibility…';
+  clrStatus();
+};
+
+/* ──────────────────────────────────────────────────────
+   MINT — Metaplex lazy-loaded via dynamic import()
+   Only fires when user clicks button. Zero upfront load.
+   ────────────────────────────────────────────────────── */
+mintBtn.onclick = function(){
+  if(!provider||!isEligible||isMinting) return;
+  isMinting = true;
+  mintBtn.style.display = 'none';
+  clrStatus();
+
+  setStep(0,'Loading mint modules…');
+
+  Promise.all([
+    import('https://esm.sh/@metaplex-foundation/umi-bundle-defaults@1.3.0'),
+    import('https://esm.sh/@metaplex-foundation/umi@1.3.0'),
+    import('https://esm.sh/@metaplex-foundation/mpl-core@1.1.0'),
+    import('https://esm.sh/@metaplex-foundation/umi-signer-wallet-adapters@1.2.0')
+  ])
+  .then(function(mods){
+    var createUmi               = mods[0].createUmi;
+    var generateSigner          = mods[1].generateSigner;
+    var uPK                     = mods[1].publicKey;
+    var solAmt                  = mods[1].sol;
+    var none                    = mods[1].none;
+    var transactionBuilder      = mods[1].transactionBuilder;
+    var transferSol             = mods[1].transferSol;
+    var create                  = mods[2].create;
+    var permanentFreezeDelegate = mods[2].permanentFreezeDelegate;
+    var walletAdapterIdentity   = mods[3].walletAdapterIdentity;
+
+    var umi = createUmi(RPC).use(walletAdapterIdentity(provider));
+
+    setStep(0,'Building your NFT transaction…');
+    return new Promise(function(res){ setTimeout(res,400); }).then(function(){
+
+      var asset    = generateSigner(umi);
+      var feeKey   = uPK(FEE_OWNER);
+      var ownerKey = uPK(provider.publicKey.toString());
+
+      var builder = transactionBuilder()
+        .add(create(umi,{
+          asset:asset, name:NFT_NAME, uri:META_URI,
+          owner:ownerKey, updateAuthority:feeKey,
+          plugins:[permanentFreezeDelegate({frozen:true,authority:none()})]
+        }))
+        .add(transferSol(umi,{
+          source:ownerKey, destination:feeKey, amount:solAmt(MINT_FEE_SOL)
+        }));
+
+      setStep(1,'Approve the transaction in your wallet…');
+      mintBtn.style.display='block';
+      mintBtn.disabled=true;
+      mintBtn.classList.add('btn-minting');
+      mintBtn.textContent='Waiting for approval…';
+
+      return builder.sendAndConfirm(umi);
+    });
+  })
+  .then(function(result){
+    setStep(2,'Confirming on Solana…');
+    mintBtn.textContent='Confirming…';
+    var sig = result.signature;
+    return new Promise(function(r){ setTimeout(r,1400); }).then(function(){ return sig; });
+  })
+  .then(function(sig){
+    setStep(3,'Your NFT is now soulbound! 🎉');
+    mintBtn.classList.remove('btn-minting');
+    mintBtn.textContent='✓ Minted!';
+    mintBtn.disabled=true;
+    confetti();
+    setStatus('✅ Minted! View on <a href="https://explorer.solana.com/tx/'+sig+'" target="_blank" rel="noopener">Solana Explorer ↗</a>','s-ok');
+    isMinting=false;
+  })
+  .catch(function(e){
+    console.error(e);
+    mintProgress.style.display='none';
+    mintBtn.style.display='block';
+    mintBtn.classList.remove('btn-minting');
+    mintBtn.disabled=!isEligible;
+    mintBtn.textContent=isEligible?'Mint Your Soulbound NFT':'Not Eligible';
+    setStatus(parseErr(e),'s-err');
+    isMinting=false;
+  });
+};
+
+/* ── AUTO-RECONNECT ── */
+(function(){
+  var p=getPhantom();
+  if(p&&p.isConnected){ connectWith(p,'Phantom'); return; }
+  var sf=getSolflare();
+  if(sf&&sf.isConnected){ connectWith(sf,'Solflare'); }
+})();
+
+})();
+</script>
+</body>
+</html>
